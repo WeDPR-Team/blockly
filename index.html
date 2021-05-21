@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>PPC-Block</title>
+  <script src="blockly_compressed.js"></script>
+  <script src="blocks_compressed.js"></script>
+  <script src="msg/js/en.js"></script>
+  <script src="ppc/msg/en.js"></script>
+  <script src="javascript_compressed.js"></script>
+
+</head>
+
+<body>
+  <a href="ppc.html " style="left: 1400px; position: absolute; top: 0px" target="_blank">简体中文</a>
+  <h3 style="left: 10px; position: absolute; top: 0px">Algorithm Block</h3>
+  <div id="blocklyDiv" style="left: 10px; position: absolute;  top: 50px; height: 600px; width: 1200px">
+  </div>
+  <!-- <h3 style="left: 700px; position: absolute; top: 0px">Code Export Block</h3>
+  <textarea id="outputDiv" style="left: 700px; position: absolute; top: 50px; height: 480px; width: 600px"> -->
+  <!-- </textarea> -->
+</body>
+
+<xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+  <category name="%{BKY_COMMON}" colour="#5ba55b">
+    <block type="start"></block>
+    <block type="end"></block>
+    <block type="inputs"></block>
+    <block type="outputs"></block>
+    <block type="ppc_data_input">
+      <field name="agency_name">agency name</field>
+      <field name="dataset_name">dataset name</field>
+    </block>
+    <block type="receiver">
+      <field name="name">name</field>
+    </block>
+    <block type="default"></block>
+  </category>
+  <category name="%{BKY_REPORT}" colour="#a5745b">
+    <block type="j_joint_report">
+      <field name="NAME">true</field>
+    </block>
+    <block type="j_set_operation">
+      <field name="option">intersection</field>
+    </block>
+    <block type="j_condition_input">
+      <field name="dataset_name">dataset name</field>
+      <field name="filed_name">filed name</field>
+      <field name="start">0</field>
+      <field name="end">100</field>
+    </block>
+    <block type="j_where_input">
+      <field name="dataset_name">dataset name</field>
+      <field name="filed_name">filed name</field>
+      <field name="NAME">eq</field>
+      <field name="condition">condition</field>
+    </block>
+    <block type="j_rule_input">
+      <field name="option">max</field>
+      <field name="dataset_name">dataset name</field>
+      <field name="filed_name">filed name</field>
+    </block>
+  </category>
+  <category name="%{BKY_CLUSTERING}" colour="#9fa55b">
+    <block type="c_kmeans">
+      <field name="option">true</field>
+      <field name="k">3</field>
+      <field name="max_iter">10</field>
+    </block>
+    <block type="c_eval">
+      <field name="option">clustering</field>
+    </block>
+  </category>
+  <category name="%{BKY_REGRESSION}" colour="#745ba5">
+    <block type="r_hetero_linear_regression">
+      <field name="option">true</field>
+      <field name="option">L2</field>
+      <field name="max_iter">30</field>
+    </block>
+    <block type="r_hetero_logistic_regression">
+      <field name="option">true</field>
+      <field name="option">L2</field>
+      <field name="max_iter">30</field>
+    </block>
+    <block type="r_homo_logistic_regression">
+      <field name="option">true</field>
+      <field name="option">L2</field>
+      <field name="max_iter">30</field>
+    </block>
+    <block type="r_hetero_poission_regression">
+      <field name="option">true</field>
+      <field name="option">L2</field>
+      <field name="max_iter">30</field>
+    </block>
+    <block type="r_eval">
+      <field name="option">binary</field>
+    </block>
+    <block type="r_input">
+      <field name="name">name</field>
+      <field name="value">value</field>
+    </block>
+  </category>
+  <category name="%{BKY_NEURAL_NETWORK}" colour="#5b80a5"></category>
+  <category name="%{BKY_DECISION_TREE}" colour="#995ba5"></category>
+  <category name="%{BKY_FEATURE_ENGINEERING}" colour="#a55b80"></category>
+</xml>
+
+<script>
+  /* TODO: Change toolbox XML ID if necessary. Can export toolbox XML from Workspace Factory. */
+  var toolbox = document.getElementById("toolbox");
+
+  var options = {
+    toolbox: toolbox,
+    collapse: true,
+    comments: true,
+    disable: true,
+    maxBlocks: Infinity,
+    trashcan: true,
+    horizontalLayout: false,
+    toolboxPosition: 'start',
+    css: true,
+    media: 'https://blockly-demo.appspot.com/static/media/',
+    rtl: false,
+    scrollbars: true,
+    sounds: true,
+    oneBasedIndex: true
+  };
+
+  Blockly.defineBlocksWithJsonArray(
+    [{
+      "type": "end",
+      "message0": "%{BKY_END}",
+      "previousStatement": null,
+      "colour": 120,
+      "tooltip": "end",
+      "helpUrl": "end"
+    },
+    {
+      "type": "start",
+      "message0": "%{BKY_START}",
+      "nextStatement": null,
+      "colour": 120,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "ppc_data_input",
+      "lastDummyAlign0": "CENTRE",
+      "message0": "%{BKY_dataset} %1 %2",
+      "args0": [
+        {
+          "type": "field_input",
+          "name": "%{BKY_agency_name}",
+          "text": "%{BKY_agency_name}"
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_dataset_name}",
+          "text": "%{BKY_dataset_name}"
+        }
+      ],
+      "inputsInline": true,
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 120,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "receiver",
+      "lastDummyAlign0": "CENTRE",
+      "message0": "%{BKY_receiver} %1",
+      "args0": [
+        {
+          "type": "field_input",
+
+          "name": "%{BKY_name}",
+          "text": "%{BKY_name}",
+        }
+      ],
+      "inputsInline": true,
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 120,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "outputs",
+      "message0": "%{BKY_outputs} %1",
+      "args0": [
+        {
+          "type": "input_statement",
+          "name": "NAME"
+        }
+      ],
+      "previousStatement": null,
+      "colour": 120,
+      "tooltip": "end",
+      "helpUrl": "end"
+    },
+    {
+      "type": "inputs",
+      "message0": "%{BKY_inputs} %1",
+      "args0": [
+        {
+          "type": "input_statement",
+          "name": "dataset"
+        }
+      ],
+      "nextStatement": null,
+      "colour": 120,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "default",
+      "message0": "%{BKY_default}",
+      "previousStatement": null,
+      "colour": 120,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "j_condition_input",
+      "message0": "%1 %2 %{BKY_range} %3 - %4",
+      "args0": [
+        {
+          "type": "field_input",
+          "name": "%{BKY_dataset_name}",
+          "text": "%{BKY_dataset_name}"
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_filed_name}",
+          "text": "%{BKY_filed_name}"
+        },
+        {
+          "type": "field_number",
+          "name": "start",
+          "value": 0,
+          "min": 0,
+          "max": 200
+        },
+        {
+          "type": "field_number",
+          "name": "end",
+          "value": 100,
+          "min": 1,
+          "max": 201
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 20,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "j_where_input",
+      "message0": "%1 %{BKY_condition} %2 %3 %4",
+      "args0": [
+        {
+          "type": "field_input",
+          "name": "%{BKY_dataset_name}",
+          "text": "%{BKY_dataset_name}"
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_filed_name}",
+          "text": "%{BKY_filed_name}"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "NAME",
+          "options": [
+            [
+              "==",
+              "eq"
+            ],
+            [
+              ">=",
+              "biggeq"
+            ],
+            [
+              ">",
+              "big"
+            ],
+            [
+              "<=",
+              "smalleq"
+            ],
+            [
+              "<",
+              "small"
+            ],
+            [
+              "!=",
+              "not eq"
+            ]
+          ]
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_condition}",
+          "text": "%{BKY_condition}"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 20,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "j_rule_input",
+      "message0": "%1 %2 %3",
+      "args0": [
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_MAX}",
+              "max"
+            ],
+            [
+              "%{BKY_min}",
+              "min"
+            ],
+            [
+              "%{BKY_average}",
+              "average"
+            ],
+            [
+              "%{BKY_median}",
+              "median"
+            ]
+          ]
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_dataset_name}",
+          "text": "%{BKY_dataset_name}"
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_filed_name}",
+          "text": "%{BKY_filed_name}"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 20,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "j_joint_report",
+      "message0": "%{BKY_Joint_Report} %1 %{BKY_intersection} %2 %3 %{BKY_where} %4 %{BKY_group_by} %5 %{BKY_metrics} %6",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "NAME",
+          "options": [
+            [
+              "%{BKY_true}",
+              "true"
+            ],
+            [
+              "%{BKY_false}",
+              "false"
+            ],
+            [
+              "",
+              ""
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "input_statement",
+          "name": "where"
+        },
+        {
+          "type": "input_statement",
+          "name": "group_by"
+        },
+        {
+          "type": "input_statement",
+          "name": "metrics"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 20,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "j_set_operation",
+      "message0": "%{BKY_PRIVATE_SET_OPERATION} %1 %{BKY_Type} : %2",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_INTERSECTION}",
+              "intersection"
+            ],
+            [
+              "%{BKY_UNION}",
+              "union"
+            ]
+          ]
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 20,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "c_kmeans",
+      "message0": "%{BKY_Hetero_K_Means} %1 %{BKY_intersection} %2 %3 k: %4 %5 %{BKY_max_iter}: %6",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_true}",
+              "true"
+            ],
+            [
+              "%{BKY_false}",
+              "false"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_number",
+          "name": "k",
+          "value": 3,
+          "min": 3,
+          "max": 10,
+          "precision": 1
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_number",
+          "name": "max_iter",
+          "value": 10,
+          "min": 5,
+          "max": 20,
+          "precision": 1
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 65,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "c_eval",
+      "message0": "%{BKY_evaluation} %1 %{BKY_type}: %2",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_clustering}",
+              "clustering"
+            ],
+            [
+              "%{BKY_binary}",
+              "binary"
+            ],
+            [
+              "%{BKY_multi}",
+              "multi"
+            ],
+            [
+              "%{BKY_regression}",
+              "regression"
+            ]
+          ]
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 65,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "r_hetero_linear_regression",
+      "message0": "%{BKY_Hetero_Linear_Regression} %1 %{BKY_intersection} %2 %3 %{BKY_penalty}: %4 %5 %{BKY_max_iter}: %6 %7 %{BKY_rate} %8",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_true}",
+              "true"
+            ],
+            [
+              "%{BKY_false}",
+              "false"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "L2",
+              "L2"
+            ],
+            [
+              "L1",
+              "L1"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_number",
+          "name": "max_iter",
+          "value": 30,
+          "min": 10,
+          "max": 50,
+          "precision": 1
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "input_statement",
+          "name": "rate"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 260,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "r_hetero_logistic_regression",
+      "message0": "%{BKY_hetero_logistic_regression} %1 %{BKY_intersection} %2 %3 %{BKY_penalty}: %4 %5 %{BKY_max_iter}: %6 %7 %{BKY_rate} %8",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_true}",
+              "true"
+            ],
+            [
+              "%{BKY_false}",
+              "false"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "L2",
+              "L2"
+            ],
+            [
+              "L1",
+              "L1"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_number",
+          "name": "max_iter",
+          "value": 30,
+          "min": 10,
+          "max": 50,
+          "precision": 1
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "input_statement",
+          "name": "rate"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 260,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "r_homo_logistic_regression",
+      "message0": "%{BKY_homo_logistic_regression} %1 %{BKY_intersection} %2 %3 %{BKY_penalty}: %4 %5 %{BKY_max_iter}: %6 %7 %{BKY_rate} %8",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_true}",
+              "true"
+            ],
+            [
+              "%{BKY_false}",
+              "false"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "L2",
+              "L2"
+            ],
+            [
+              "L1",
+              "L1"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_number",
+          "name": "max_iter",
+          "value": 30,
+          "min": 10,
+          "max": 50,
+          "precision": 1
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "input_statement",
+          "name": "rate"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 260,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "r_eval",
+      "message0": "%{BKY_evaluation} %1 %{BKY_type}: %2",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_clustering}",
+              "clustering"
+            ],
+            [
+              "%{BKY_binary}",
+              "binary"
+            ],
+            [
+              "%{BKY_multi}",
+              "multi"
+            ],
+            [
+              "%{BKY_regression}",
+              "regression"
+            ]
+          ]
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 260,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "r_input",
+      "lastDummyAlign0": "CENTRE",
+      "message0": "%{BKY_parameter} %1 : %2",
+      "args0": [
+        {
+          "type": "field_input",
+          "name": "%{BKY_name}",
+          "text": "%{BKY_name}"
+        },
+        {
+          "type": "field_input",
+          "name": "%{BKY_value}",
+          "text": "%{BKY_value}"
+        }
+      ],
+      "inputsInline": true,
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 260,
+      "tooltip": "",
+      "helpUrl": ""
+    },
+    {
+      "type": "r_hetero_poission_regression",
+      "message0": "%{BKY_hetero_poission_regression} %1 %{BKY_intersection} %2 %3 %{BKY_penalty}: %4 %5 %{BKY_max_iter}: %6 %7 %{BKY_rate} %8",
+      "args0": [
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "%{BKY_true}",
+              "true"
+            ],
+            [
+              "%{BKY_false}",
+              "false"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "option",
+          "options": [
+            [
+              "L2",
+              "L2"
+            ],
+            [
+              "L1",
+              "L1"
+            ]
+          ]
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "field_number",
+          "name": "max_iter",
+          "value": 30,
+          "min": 10,
+          "max": 50,
+          "precision": 1
+        },
+        {
+          "type": "input_dummy"
+        },
+        {
+          "type": "input_statement",
+          "name": "rate"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": 260,
+      "tooltip": "",
+      "helpUrl": ""
+    }]
+  );
+
+  /* Inject your workspace */
+  // var workspace = Blockly.inject(/* TODO: Add ID of div to inject Blockly into */, options);
+  var workspace = Blockly.inject('blocklyDiv', options);
+
+
+  // Blockly.JavaScript['ppc_variable_input'] = function (block) {
+  //   var variable_input = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('INPUT'), Blockly.Variables.NAME_TYPE);
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['end'] = function (block) {
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['start'] = function (block) {
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['ppc_data_input'] = function (block) {
+  //   var text_agency_name = block.getFieldValue('agency_name');
+  //   var text_dataset_name = block.getFieldValue('dataset_name');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['receiver'] = function (block) {
+  //   var text_name = block.getFieldValue('name');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['outputs'] = function (block) {
+  //   var statements_name = Blockly.JavaScript.statementToCode(block, 'NAME');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['inputs'] = function (block) {
+  //   var statements_dataset = Blockly.JavaScript.statementToCode(block, 'dataset');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['default'] = function (block) {
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['j_condition_input'] = function (block) {
+  //   var text_dataset_name = block.getFieldValue('dataset_name');
+  //   var text_filed_name = block.getFieldValue('filed_name');
+  //   var number_start = block.getFieldValue('start');
+  //   var number_end = block.getFieldValue('end');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['j_where_input'] = function (block) {
+  //   var text_dataset_name = block.getFieldValue('dataset_name');
+  //   var text_filed_name = block.getFieldValue('filed_name');
+  //   var dropdown_name = block.getFieldValue('NAME');
+  //   var text_condition = block.getFieldValue('condition');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['j_rule_input'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var text_dataset_name = block.getFieldValue('dataset_name');
+  //   var text_filed_name = block.getFieldValue('filed_name');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['j_joint_report'] = function (block) {
+  //   var dropdown_name = block.getFieldValue('NAME');
+  //   var statements_where = Blockly.JavaScript.statementToCode(block, 'where');
+  //   var statements_group_by = Blockly.JavaScript.statementToCode(block, 'group_by');
+  //   var statements_metrics = Blockly.JavaScript.statementToCode(block, 'metrics');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['j_psi'] = function (block) {
+  //   var text_name = block.getFieldValue('NAME');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['j_psu'] = function (block) {
+  //   var text_name = block.getFieldValue('NAME');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['c_kmeans'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var number_k = block.getFieldValue('k');
+  //   var number_max_iter = block.getFieldValue('max_iter');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['c_eval'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['r_hetero_linear_regression'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var number_max_iter = block.getFieldValue('max_iter');
+  //   var statements_rate = Blockly.JavaScript.statementToCode(block, 'rate');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['r_hetero_logistic_regression'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var number_max_iter = block.getFieldValue('max_iter');
+  //   var statements_rate = Blockly.JavaScript.statementToCode(block, 'rate');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['r_eval'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['r_input'] = function (block) {
+  //   var text_name = block.getFieldValue('name');
+  //   var text_value = block.getFieldValue('value');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // Blockly.JavaScript['r_hetero_poission_regression'] = function (block) {
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var dropdown_option = block.getFieldValue('option');
+  //   var number_max_iter = block.getFieldValue('max_iter');
+  //   var statements_rate = Blockly.JavaScript.statementToCode(block, 'rate');
+  //   // TODO: Assemble JavaScript into code variable.
+  //   var code = '...;\n';
+  //   return code;
+  // };
+
+  // var code = Blockly.JavaScript.workspaceToCode(workspace);
+
+  // function myUpdateFunction(event) {
+
+  //   var code = Blockly.JavaScript.workspaceToCode(workspace);
+
+  //   document.getElementById('outputDiv').value = code;
+  // }
+  // workspace.addChangeListener(myUpdateFunction);
+
+</script>
+
+</html>
